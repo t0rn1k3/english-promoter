@@ -1,0 +1,19 @@
+.slider {
+  display: flex;
+  align-items: center;
+}
+
+.slider-content {
+  overflow: hidden;
+  width: 300px;
+  height: 200px;
+}
+
+.slide {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.slide.active {
+  opacity: 1;
+}
