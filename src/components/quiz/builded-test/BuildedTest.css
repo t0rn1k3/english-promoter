@@ -1,3 +1,9 @@
+.non-copyable {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
 .builder-quiz {
   margin-top: 20px;
   padding: 10px;
@@ -16,4 +22,13 @@
 .quiz-question ul {
   list-style: disc;
   padding-left: 20px;
+}
+.builded-h2 h2 {
+  font-size: 50px;
+  margin: 0;
+}
+.builded-h2 p {
+  font-size: 20px;
+  margin: 0;
+  color: #b5b0b6;
 }

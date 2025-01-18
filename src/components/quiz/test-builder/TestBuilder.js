@@ -5,11 +5,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./TestBuilder.css";
 
 const TestBuilder = () => {
+  const [taskExplanation, setTaskExplanation] = useState("");
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState([""]);
   const [questionsList, setQuestionsList] = useState([]);
   const navigate = useNavigate();
   const optionRefs = useRef([]);
+
+  const handleTaskExplanationChange = (e) => {
+    setTaskExplanation(e.target.value);
+  };
 
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
@@ -55,6 +60,12 @@ const TestBuilder = () => {
     optionRefs.current = [];
   };
 
+  const saveQuizAndNavigate = () => {
+    navigate("/test", {
+      state: { taskExplanation, questionsList },
+    });
+  };
+
   const deleteQuestion = (id) => {
     const updatedQuestions = questionsList
       .filter((q) => q.id !== id)
@@ -62,13 +73,20 @@ const TestBuilder = () => {
     setQuestionsList(updatedQuestions);
   };
 
-  const navigateToBuildedTest = () => {
-    navigate("/test", { state: { questionsList } });
-  };
-
   return (
     <div className="test-maker">
-      <h2>Create a New Question</h2>
+      <h2>Create a New Test</h2>
+
+      <div>
+        <label>Task Explanation:</label>
+        <input
+          type="text"
+          value={taskExplanation}
+          onChange={handleTaskExplanationChange}
+          placeholder="Describe the task or provide instructions"
+          rows="3"
+        />
+      </div>
 
       <div>
         <label>Question:</label>
@@ -109,7 +127,7 @@ const TestBuilder = () => {
         Save Question
       </button>
 
-      <button className="navigate-button" onClick={navigateToBuildedTest}>
+      <button className="navigate-button" onClick={saveQuizAndNavigate}>
         Save Quiz and Go to Builded Test
       </button>
 
