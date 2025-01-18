@@ -1,21 +1,23 @@
-import "./App.css";
-import MainPage from "./components/main -page/MainPage";
-import Slider from "./components/quiz/slider/Slider";
+import React, { useState } from "react";
 import TestBuilder from "./components/quiz/test-builder/TestBuilder";
+import BuildedTest from "./components/quiz/builded-test/BuildedTest";
 
-function App() {
-  const questions = [
-    { id: 1, question: "What is the capital of France?" },
-    { id: 2, question: "What is 2 + 2?" },
-    { id: 3, question: "Who wrote 'Hamlet'?" },
-  ];
+const App = () => {
+  const [quizData, setQuizData] = useState(null); // Holds saved quiz data
+
+  const handleSaveQuiz = (questions) => {
+    setQuizData(questions); // Save the quiz data
+  };
+
   return (
-    <div className="App">
-      {/* <MainPage /> */}
-      {/* <Slider questions={questions} /> */}
-      <TestBuilder />
+    <div className="app">
+      {quizData ? (
+        <BuildedTest questions={quizData} />
+      ) : (
+        <TestBuilder onSaveQuiz={handleSaveQuiz} />
+      )}
     </div>
   );
-}
+};
 
 export default App;

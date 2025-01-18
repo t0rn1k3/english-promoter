@@ -1,0 +1,19 @@
+.builder-quiz {
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 2px solid #ccc;
+}
+
+.quiz-question {
+  margin-bottom: 20px;
+}
+
+.quiz-question p {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.quiz-question ul {
+  list-style: disc;
+  padding-left: 20px;
+}

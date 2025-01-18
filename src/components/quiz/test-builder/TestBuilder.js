@@ -1,55 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { faTrashCan } from "@fortawesome/duotone-light-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import BuildedTest from "../builded-test/BuildedTest";
 import "./TestBuilder.css";
 
 const TestBuilder = () => {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState([""]);
-  const [questionsList, setQuestionsList] = useState([]); // Array to store multiple questions
+  const [questionsList, setQuestionsList] = useState([]);
+  const optionRefs = useRef([]);
 
-  // Update the question text
   const handleQuestionChange = (e) => {
     setQuestion(e.target.value);
   };
 
-  // Update a specific option
-  const handleOptionChange = (index, value) => {
+  const handleOptionChange = (index, value, event) => {
     const updatedOptions = [...options];
     updatedOptions[index] = value;
     setOptions(updatedOptions);
+
+    if (event && event.key === "Enter") {
+      addOption(index + 1);
+    }
   };
 
-  // Add a new option field
-  const addOption = () => {
-    setOptions([...options, ""]);
+  const addOption = (focusIndex = options.length) => {
+    setOptions((prevOptions) => {
+      const newOptions = [...prevOptions, ""];
+      return newOptions;
+    });
+
+    setTimeout(() => {
+      optionRefs.current[focusIndex]?.focus();
+    }, 0);
   };
 
-  // Remove an option field
   const removeOption = (index) => {
     const updatedOptions = options.filter((_, i) => i !== index);
     setOptions(updatedOptions);
+    optionRefs.current.splice(index, 1);
   };
 
-  // Save or submit the test
   const handleSubmit = () => {
     const newQuestion = {
       id: questionsList.length + 1,
       question,
-      options: options.filter((option) => option.trim() !== ""), // Remove empty options
+      options: options.filter((option) => option.trim() !== ""),
     };
 
-    // Add the new question to the list
     setQuestionsList([...questionsList, newQuestion]);
-
-    // Reset the form
     setQuestion("");
     setOptions([""]);
+    optionRefs.current = [];
+  };
+
+  const deleteQuestion = (id) => {
+    const updatedQuestions = questionsList
+      .filter((q) => q.id !== id)
+      .map((q, index) => ({ ...q, id: index + 1 }));
+    setQuestionsList(updatedQuestions);
   };
 
   return (
     <div className="test-maker">
       <h2>Create a New Question</h2>
 
-      {/* Question Input */}
       <div>
         <label>Question:</label>
         <input
@@ -60,15 +75,16 @@ const TestBuilder = () => {
         />
       </div>
 
-      {/* Options Input */}
       <div>
         <label>Options:</label>
         {options.map((option, index) => (
           <div key={index} className="option">
             <input
+              ref={(el) => (optionRefs.current[index] = el)}
               type="text"
               value={option}
-              onChange={(e) => handleOptionChange(index, e.target.value)}
+              onChange={(e) => handleOptionChange(index, e.target.value, e)}
+              onKeyDown={(e) => handleOptionChange(index, option, e)}
               placeholder={`Option ${index + 1}`}
             />
             <button
@@ -79,41 +95,39 @@ const TestBuilder = () => {
             </button>
           </div>
         ))}
-        <button onClick={addOption}>Add Option</button>
+        <button className="add-option" onClick={() => addOption()}>
+          Add Option
+        </button>
       </div>
 
-      {/* Submit Button */}
       <button className="save-question-button" onClick={handleSubmit}>
         Save Question
       </button>
 
-      {/* Test Preview */}
-      {questionsList.length > 0 && (
-        <div className="test-preview">
-          <h3>Preview of Your Test</h3>
-          {questionsList.map((q) => (
-            <div key={q.id} className="question-preview">
-              <p>
-                <strong>
-                  {q.id}. {q.question}
-                </strong>
-              </p>
-              {q.options.length > 0 ? (
-                <ul>
-                  {q.options.map((option, index) => (
-                    <li key={index}>
-                      <label>
-                        <input type="radio" name={`question-${q.id}`} />
-                        {option}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="test-preview">
+        <h3>Preview of Your Test</h3>
+        {questionsList.map((q) => (
+          <div key={q.id} className="question-preview">
+            <p>
+              <strong>
+                {q.id}. {q.question}
+              </strong>
+            </p>
+            <ul>
+              {q.options.map((option, index) => (
+                <li key={index}>{option}</li>
+              ))}
+            </ul>
+            <FontAwesomeIcon
+              icon={faTrashCan}
+              className="delete-question-button"
+              onClick={() => deleteQuestion(q.id)}
+            />
+          </div>
+        ))}
+      </div>
+
+      <BuildedTest questions={questionsList} />
     </div>
   );
 };
