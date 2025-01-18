@@ -1,12 +1,18 @@
+:root {
+  --primary-color: #6f147b; /* Define the primary color */
+}
+
 .test-maker {
   width: 80%;
   margin: 0 auto;
   font-family: Arial, sans-serif;
   color: var(--primary-color);
 }
+
 h2 {
   color: var(--primary-color);
 }
+
 .test-maker label {
   display: block;
   margin: 8px 0;
@@ -22,26 +28,28 @@ h2 {
   outline: none;
   color: var(--primary-color);
 }
+
 .test-maker input::placeholder {
   color: var(--primary-color);
 }
-.test-maker li {
-  padding-left: 15px;
-}
+
 .option {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  width: 320px;
+  width: 100%; /* Ensure full width */
 }
 
 .option input {
   flex: 1;
   margin-right: 10px;
 }
+
 .add-option {
-  display: none;
+  display: inline-block; /* Ensure visibility */
+  margin-top: 10px;
 }
+
 button {
   background-color: var(--primary-color);
   color: white;
@@ -53,20 +61,24 @@ button {
 }
 
 button:disabled {
-  background-color: rgba(111, 20, 123, 0.8);
+  background-color: rgba(111, 20, 123, 0.5); /* Use lighter disabled color */
   cursor: not-allowed;
 }
+
 button:hover {
   background-color: rgba(111, 20, 123, 0.8);
 }
+
 .delete-question-button {
   color: var(--primary-color);
   cursor: pointer;
   font-size: 18px;
 }
+
 .save-question-button {
   margin-top: 10px;
 }
+
 .test-preview {
   margin-top: 20px;
   padding: 15px;
@@ -75,10 +87,7 @@ button:hover {
   background-color: #f9f9f9;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-.questions-field {
-  display: flex;
-  justify-content: space-between;
-}
+
 .test-preview h3 {
   margin-bottom: 15px;
 }

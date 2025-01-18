@@ -1,13 +1,14 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { faTrashCan } from "@fortawesome/duotone-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import BuildedTest from "../builded-test/BuildedTest";
 import "./TestBuilder.css";
 
 const TestBuilder = () => {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState([""]);
   const [questionsList, setQuestionsList] = useState([]);
+  const navigate = useNavigate();
   const optionRefs = useRef([]);
 
   const handleQuestionChange = (e) => {
@@ -61,6 +62,10 @@ const TestBuilder = () => {
     setQuestionsList(updatedQuestions);
   };
 
+  const navigateToBuildedTest = () => {
+    navigate("/test", { state: { questionsList } });
+  };
+
   return (
     <div className="test-maker">
       <h2>Create a New Question</h2>
@@ -104,6 +109,10 @@ const TestBuilder = () => {
         Save Question
       </button>
 
+      <button className="navigate-button" onClick={navigateToBuildedTest}>
+        Save Quiz and Go to Builded Test
+      </button>
+
       <div className="test-preview">
         <h3>Preview of Your Test</h3>
         {questionsList.map((q) => (
@@ -126,8 +135,6 @@ const TestBuilder = () => {
           </div>
         ))}
       </div>
-
-      <BuildedTest questions={questionsList} />
     </div>
   );
 };

@@ -1,28 +1,27 @@
 import React from "react";
-import "./BuildedTest.css";
+import { useLocation } from "react-router-dom";
 
-const BuildedTest = ({ questions }) => {
+const BuildedTest = () => {
+  const location = useLocation();
+  const { questionsList } = location.state || { questionsList: [] };
+
   return (
-    <div className="builder-quiz">
-      <h2>Your Built Quiz</h2>
-      {questions.length === 0 ? (
-        <p>No questions created yet.</p>
-      ) : (
-        questions.map((question) => (
-          <div key={question.id} className="quiz-question">
-            <p>
-              <strong>
-                {question.id}. {question.question}
-              </strong>
-            </p>
-            <ul>
-              {question.options.map((option, index) => (
-                <li key={index}>{option}</li>
-              ))}
-            </ul>
-          </div>
-        ))
-      )}
+    <div className="builded-test">
+      <h2>Builded Test</h2>
+      {questionsList.map((q) => (
+        <div key={q.id} className="question-item">
+          <p>
+            <strong>
+              {q.id}. {q.question}
+            </strong>
+          </p>
+          <ul>
+            {q.options.map((option, index) => (
+              <li key={index}>{option}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 };

@@ -1,22 +1,16 @@
 import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import TestBuilder from "./components/quiz/test-builder/TestBuilder";
 import BuildedTest from "./components/quiz/builded-test/BuildedTest";
 
 const App = () => {
-  const [quizData, setQuizData] = useState(null); // Holds saved quiz data
-
-  const handleSaveQuiz = (questions) => {
-    setQuizData(questions); // Save the quiz data
-  };
-
   return (
-    <div className="app">
-      {quizData ? (
-        <BuildedTest questions={quizData} />
-      ) : (
-        <TestBuilder onSaveQuiz={handleSaveQuiz} />
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<TestBuilder />} />
+        <Route path="/test" element={<BuildedTest />} />
+      </Routes>
+    </Router>
   );
 };
 
