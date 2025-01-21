@@ -1,17 +1,35 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import MainPage from "./components/main -page/MainPage";
 import TestBuilder from "./components/quiz/test-builder/TestBuilder";
-import BuildedTest from "./components/quiz/builded-test/BuildedTest";
+import PageNotFound from "./components/page-not-found/PageNotFound";
 
-const App = () => {
+const PrivateRoute = ({ children }) => {
+  const token = localStorage.getItem("authToken");
+  return token ? children : <Navigate to="/" />;
+};
+
+function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<TestBuilder />} />
-        <Route path="/test" element={<BuildedTest />} />
+        <Route path="/" element={<MainPage />} />
+        <Route
+          path="/test-builder/:idToken"
+          element={
+            <PrivateRoute>
+              <TestBuilder />
+            </PrivateRoute>
+          }
+        />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;

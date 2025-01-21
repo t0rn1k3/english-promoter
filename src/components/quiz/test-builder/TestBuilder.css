@@ -37,14 +37,12 @@ h2 {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  width: 100%; /* Ensure full width */
+  width: 100%;
 }
 
-.option input {
-  flex: 1;
-  margin-right: 10px;
+.option > input {
+  width: 320px;
 }
-
 .add-option {
   display: inline-block; /* Ensure visibility */
   margin-top: 10px;
@@ -54,9 +52,9 @@ button {
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 5px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 10px;
   transition: 0.3s;
 }
 
@@ -64,7 +62,10 @@ button:disabled {
   background-color: rgba(111, 20, 123, 0.5); /* Use lighter disabled color */
   cursor: not-allowed;
 }
-
+button:disabled:hover {
+  background-color: rgba(111, 20, 123, 0.5); /* Use lighter disabled color */
+  cursor: not-allowed;
+}
 button:hover {
   background-color: rgba(111, 20, 123, 0.8);
 }
@@ -103,4 +104,63 @@ button:hover {
 
 .test-preview li {
   margin-bottom: 10px;
+}
+.navigate-button {
+  margin-top: 20px;
+}
+input[type="checkbox"] {
+  cursor: pointer;
+  width: 13px;
+}
+.tooltip-container {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  width: 13px;
+  top: 0;
+}
+
+.tooltip {
+  width: 150px;
+  visibility: hidden;
+  background-color: var(--primary-color);
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+}
+.input-cont {
+  position: relative;
+  width: 45%;
+}
+.checkbox-cont {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0px;
+}
+.option-value {
+  width: 100%;
+}
+.option button {
+  margin-left: 30px;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+.test-buttons {
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

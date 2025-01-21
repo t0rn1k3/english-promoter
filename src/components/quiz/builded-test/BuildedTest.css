@@ -4,24 +4,31 @@
   -moz-user-select: none;
   -ms-user-select: none;
 }
-.builder-quiz {
-  margin-top: 20px;
+.builded-test {
+  margin: 20px auto;
   padding: 10px;
-  border-top: 2px solid #ccc;
+  width: 90%;
 }
 
-.quiz-question {
+.question-item {
   margin-bottom: 20px;
 }
-
-.quiz-question p {
-  font-size: 18px;
+.task-details {
+  color: #0071ca;
+  font-size: 20px;
   font-weight: bold;
 }
-
-.quiz-question ul {
-  list-style: disc;
-  padding-left: 20px;
+.question-item p {
+  font-size: 20px;
+  font-weight: bold;
+}
+.question-item ul {
+  list-style: upper-alpha;
+  padding-left: 50px;
+}
+.question-item li {
+  font-size: 18px;
+  line-height: 25px;
 }
 .builded-h2 h2 {
   font-size: 50px;

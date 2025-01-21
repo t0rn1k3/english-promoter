@@ -1,16 +1,52 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { faTrashCan } from "@fortawesome/duotone-light-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { TestContext } from "../../context/TextContext";
+import { signInAnonymouslyToFirebase } from "../../../firebase";
 import "./TestBuilder.css";
 
 const TestBuilder = () => {
-  const [taskExplanation, setTaskExplanation] = useState("");
+  const {
+    taskExplanation,
+    setTaskExplanation,
+    questionsList,
+    setQuestionsList,
+  } = useContext(TestContext);
+
   const [question, setQuestion] = useState("");
-  const [options, setOptions] = useState([""]);
-  const [questionsList, setQuestionsList] = useState([]);
+  const [options, setOptions] = useState([{ text: "", isCorrect: false }]);
   const navigate = useNavigate();
   const optionRefs = useRef([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const authenticate = async () => {
+      try {
+        const token = await signInAnonymouslyToFirebase();
+        localStorage.setItem("authToken", token);
+        setIsLoading(false);
+      } catch (error) {
+        setError("Authentication failed. Please try again.");
+      }
+    };
+
+    const existingToken = localStorage.getItem("authToken");
+    if (!existingToken) {
+      authenticate();
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
+
+  if (isLoading) {
+    return <p>იტვირთება...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   const handleTaskExplanationChange = (e) => {
     setTaskExplanation(e.target.value);
@@ -22,7 +58,7 @@ const TestBuilder = () => {
 
   const handleOptionChange = (index, value, event) => {
     const updatedOptions = [...options];
-    updatedOptions[index] = value;
+    updatedOptions[index] = { ...updatedOptions[index], text: value };
     setOptions(updatedOptions);
 
     if (event && event.key === "Enter") {
@@ -30,11 +66,18 @@ const TestBuilder = () => {
     }
   };
 
+  const handleCheckboxChange = (index) => {
+    const updatedOptions = options.map((option, i) => ({
+      ...option,
+      isCorrect: i === index ? !option.isCorrect : option.isCorrect,
+    }));
+    setOptions(updatedOptions);
+  };
   const addOption = (focusIndex = options.length) => {
-    setOptions((prevOptions) => {
-      const newOptions = [...prevOptions, ""];
-      return newOptions;
-    });
+    setOptions((prevOptions) => [
+      ...prevOptions,
+      { text: "", isCorrect: false },
+    ]);
 
     setTimeout(() => {
       optionRefs.current[focusIndex]?.focus();
@@ -51,19 +94,16 @@ const TestBuilder = () => {
     const newQuestion = {
       id: questionsList.length + 1,
       question,
-      options: options.filter((option) => option.trim() !== ""),
+      options: options.filter((option) => option.text.trim() !== ""),
     };
 
     setQuestionsList([...questionsList, newQuestion]);
     setQuestion("");
-    setOptions([""]);
-    optionRefs.current = [];
+    setOptions([{ text: "", isCorrect: false }]);
   };
 
   const saveQuizAndNavigate = () => {
-    navigate("/test", {
-      state: { taskExplanation, questionsList },
-    });
+    navigate("/");
   };
 
   const deleteQuestion = (id) => {
@@ -75,83 +115,104 @@ const TestBuilder = () => {
 
   return (
     <div className="test-maker">
-      <h2>Create a New Test</h2>
+      <h2>შეკითხვის დამატება</h2>
 
       <div>
-        <label>Task Explanation:</label>
+        <label>დავალება : </label>
         <input
           type="text"
           value={taskExplanation}
           onChange={handleTaskExplanationChange}
-          placeholder="Describe the task or provide instructions"
+          placeholder="აღწერე დავალება"
           rows="3"
         />
       </div>
 
       <div>
-        <label>Question:</label>
+        <label>შეკითხვა:</label>
         <input
           type="text"
           value={question}
           onChange={handleQuestionChange}
-          placeholder="Enter your question"
+          placeholder="დაამატე შეკითხვა"
         />
       </div>
 
       <div>
-        <label>Options:</label>
+        <label>სავარაუდო პასუხი:</label>
         {options.map((option, index) => (
           <div key={index} className="option">
-            <input
-              ref={(el) => (optionRefs.current[index] = el)}
-              type="text"
-              value={option}
-              onChange={(e) => handleOptionChange(index, e.target.value, e)}
-              onKeyDown={(e) => handleOptionChange(index, option, e)}
-              placeholder={`Option ${index + 1}`}
-            />
+            <div className="input-cont">
+              <input
+                className="option-value"
+                ref={(el) => (optionRefs.current[index] = el)}
+                type="text"
+                value={option.text}
+                onChange={(e) => handleOptionChange(index, e.target.value)}
+                onKeyDown={(e) => handleOptionChange(index, option.text, e)}
+                placeholder={`ვარიანტი ${index + 1}`}
+              />
+              <div className="checkbox-cont">
+                <div className="tooltip-container">
+                  <input
+                    type="checkbox"
+                    checked={option.isCorrect}
+                    onChange={() => handleCheckboxChange(index)}
+                  />
+                  <span className="tooltip">მონიშნე სწორი პასუხი</span>
+                </div>
+              </div>
+            </div>
             <button
               onClick={() => removeOption(index)}
               disabled={options.length === 1}
             >
-              Remove
+              წაშლა
             </button>
           </div>
         ))}
         <button className="add-option" onClick={() => addOption()}>
-          Add Option
+          დაამატე ვარიანტი
         </button>
       </div>
 
       <button className="save-question-button" onClick={handleSubmit}>
-        Save Question
-      </button>
-
-      <button className="navigate-button" onClick={saveQuizAndNavigate}>
-        Save Quiz and Go to Builded Test
+        შეკითხვის შენახვა
       </button>
 
       <div className="test-preview">
-        <h3>Preview of Your Test</h3>
-        {questionsList.map((q) => (
-          <div key={q.id} className="question-preview">
-            <p>
-              <strong>
-                {q.id}. {q.question}
-              </strong>
-            </p>
-            <ul>
-              {q.options.map((option, index) => (
-                <li key={index}>{option}</li>
-              ))}
-            </ul>
-            <FontAwesomeIcon
-              icon={faTrashCan}
-              className="delete-question-button"
-              onClick={() => deleteQuestion(q.id)}
-            />
-          </div>
-        ))}
+        <h3>ტესტი : </h3>
+        {questionsList.map((q) => {
+          return (
+            <div key={q.id} className="question-preview">
+              <p>
+                <strong>
+                  {q.id}. {q.question}
+                </strong>
+              </p>
+              <ul>
+                {q.options.map((option, index) => (
+                  <li key={index}>
+                    {option.text} {option.isCorrect ? "(Correct)" : ""}
+                  </li>
+                ))}
+                <FontAwesomeIcon
+                  icon={faTrashCan}
+                  onClick={() => deleteQuestion(q.id)}
+                />
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="test-buttons">
+        <button className="navigate-button" onClick={saveQuizAndNavigate}>
+          ტესტის შენახვა
+        </button>
+        <button className="navigate-button" onClick={saveQuizAndNavigate}>
+          ტესტის დასრულება
+        </button>
       </div>
     </div>
   );

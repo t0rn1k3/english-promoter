@@ -1,0 +1,11 @@
+.page-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.page-not-found .error-404 {
+  font-size: 180px;
+}
+.page-not-found span {
+  font-size: 30px;
+}

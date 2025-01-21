@@ -1,14 +1,6 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
 import "./BuildedTest.css";
 
-const BuildedTest = () => {
-  const location = useLocation();
-  const { taskExplanation, questionsList } = location.state || {
-    taskExplanation: "",
-    questionsList: [],
-  };
-
+const BuildedTest = ({ taskExplanation, questionsList }) => {
   return (
     <div className="builded-test">
       <div className="builded-h2">
@@ -16,7 +8,7 @@ const BuildedTest = () => {
         <p>იმიტირებული ტესტირება</p>
       </div>
       <div>
-        <p>{taskExplanation}</p>
+        <p className="task-details">{taskExplanation}</p>
       </div>
       {questionsList.map((q) => (
         <div key={q.id} className="question-item non-copyable">
@@ -27,7 +19,7 @@ const BuildedTest = () => {
           </p>
           <ul>
             {q.options.map((option, index) => (
-              <li key={index}>{option}</li>
+              <li key={index}>{option.text}</li>
             ))}
           </ul>
         </div>
@@ -35,5 +27,4 @@ const BuildedTest = () => {
     </div>
   );
 };
-
 export default BuildedTest;
